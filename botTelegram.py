@@ -1,7 +1,24 @@
+import requests
+
+try:
+	r = requests.get('http://www.niclabs.cl')
+	if(r.status_code==200):
+		print("It's all good, man")	
+	else:
+		print("Something is wrong...")	
+except:
+	print("Something is wrong...")
+
+
+exit()
+
 import telegram
 bot = telegram.Bot(token='522017250:AAE89zva8udGDpm5U_c7jei_rgiiXYP_7Lg')
 
 print(bot.get_me())
+
+
+
 
 
 from telegram.ext import Updater, CommandHandler
@@ -47,13 +64,14 @@ updater.idle()
 
 
 def check_status(bot, update, args):
-	r = requests.get('www.niclabs.cl')	
-	if(r.status_code!=200):
-		bot.send_message(chat_id=update.message.chat_id, text="it's all good, man")	
-	else:
+	try:
+		r = requests.get('http://www.niclabs.cl')
+		if(r.status_code==200):
+			bot.send_message(chat_id=update.message.chat_id, text="it's all good, man")	
+		else:
+			bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
+	except:
 		bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
-	#text_caps = ' '.join(args).upper()
-	#bot.send_message(chat_id=update.message.chat_id, text=text_caps)
 check_status_handler = CommandHandler('check_status', check_status)
 dispatcher.add_handler(check_status_handler)
 
