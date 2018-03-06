@@ -83,25 +83,26 @@ dispatcher.add_handler(stop_check_status_handler)
 
 
 
-stop=True
+#stop=True
 def callback_alarm(bot, job):
 	bot.send_message(chat_id=job.context, text='BEEP')
 def callback_timer(bot, update, job_queue):
-	stop=False
+	#stop=False
 	bot.send_message(chat_id=update.message.chat_id, text='Setting a timer for 1 minute!')
 	#run_repeating(callback, interval, first=None, context=None, name=None)
-	job_queue.run_repeating(callback_alarm, 5, first = 0, context=update.message.chat_id)
-	if(stop):
-		job_queue.stop()
+	job_queue.run_repeating(callback_alarm, 5, first = 0, context=update.message.chat_id, name = "timer")
+	#if(stop):
+	#	job_queue.stop()
 timer_handler = CommandHandler('timer', callback_timer, pass_job_queue=True)
 dispatcher.add_handler(timer_handler)
 
 
-def stop_timer(bot, update):
-	stop = True
+def stop_timer(bot, update, job_queue):
+	job_queue.stop()
+	#stop = True
 	bot.send_message(chat_id=update.message.chat_id, text="Timer stopped.")	
 		
-stop_timer_handler = CommandHandler('stop_timer', stop_timer)
+stop_timer_handler = CommandHandler('stop_timer', stop_timer, pass_job_queue=True)
 dispatcher.add_handler(stop_timer_handler)
 
 
