@@ -3,6 +3,7 @@
 import telegram
 import requests
 import time
+import dns.resolver
 
 bot = telegram.Bot(token='522017250:AAE89zva8udGDpm5U_c7jei_rgiiXYP_7Lg')
 
@@ -19,34 +20,59 @@ updater = Updater(token='522017250:AAE89zva8udGDpm5U_c7jei_rgiiXYP_7Lg')
 
 dispatcher = updater.dispatcher
 
+
+
 def start(bot, update):
-	print("hola")
-	bot.send_message(chat_id=update.message.chat_id, text="I'm a bot, please talk to me!")
+	name = 'niclabs.cl'
+	print(name)
+	my_resolver = dns.resolver.Resolver()
+
+	# 8.8.8.8 is Google's public DNS server
+	my_resolver.nameservers = ['8.8.8.8']	
+	#answer = my_resolver.query(name)
+	try:
+		answer = my_resolver.query(name)
+		#return True
+	except:
+		print("something is wrong")
+		#return False
+
+	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds:')
+	working = check_web_working()
+	d[update.message.chat_id] = working
+	if(working):
+		bot.send_message(chat_id=update.message.chat_id, text='It\'s all good, man.')
+	else:
+		bot.send_message(chat_id=update.message.chat_id, text='Something is wrong...')
+
+	job_queue.run_repeating(check_status, 5, first = 5, context=update.message.chat_id)
 
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 
-def caps(bot, update, args):
-	text_caps = ' '.join(args).upper()
-	bot.send_message(chat_id=update.message.chat_id, text=text_caps)
-caps_handler = CommandHandler('caps', caps, pass_args=True)
-dispatcher.add_handler(caps_handler)
-
-
-stop=False
-def hello(bot, update):
-    print("hello")
-    stop=!stop
-    update.message.reply_text(
-        'Hello {}'.format(update.message.from_user.first_name))
-dispatcher.add_handler(CommandHandler('hello', hello))
 
 
 
 
-def check_web_working(name):
-	return stop
 
+
+
+def check_web_working():
+	name = 'niclabs.cl'
+	print(name)
+	my_resolver = dns.resolver.Resolver()
+
+	# 8.8.8.8 is Google's public DNS server
+	my_resolver.nameservers = ['8.8.8.8']	
+	#answer = my_resolver.query(name)
+	try:
+		answer = my_resolver.query(name)
+		return True
+	except:
+		print("something is wrong")
+		return False
+
+		
 	try:
 		r = requests.get(name)
 		if(r.status_code==200):
@@ -57,36 +83,33 @@ def check_web_working(name):
 		return False
 
 
-
-
 def send_working_message(bot, job, working_now):
 	if(working_now):
-		bot.send_message(chat_id=job.context, text='It\'s all good, man')
+		bot.send_message(chat_id=job.context, text='It\'s all good, man.')
 	else:
-		bot.send_message(chat_id=job.context, text='Not working')
+		bot.send_message(chat_id=job.context, text='Something is wrong...')
 
+d = {} #dictionary that saves last status check for every chat
 
 
 def check_status(bot, job):
-	working_now = check_web_working('http://www.niclabs.cl')
-	if(working != working_now):
+	working_now = True #check_web_working('http://www.niclabs.cl')
+	if(d[job.context] != working_now):
 		send_working_message(bot, job, working_now)
-		working = working_now
-		
 
-working = False
-def check_status_timer(bot, update):
-	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds')
-	working = check_web_working('http://www.niclabs.cl')
-	
+
+def check_status_timer(bot, update, job_queue):
+	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds:')
+	working = check_web_working()
+	d[update.message.chat_id] = working
 	if(working):
-		bot.send_message(chat_id=update.message.chat_id, text='It\'s all good, man')
+		bot.send_message(chat_id=update.message.chat_id, text='It\'s all good, man.')
 	else:
-		bot.send_message(chat_id=update.message.chat_id, text='Not working')
+		bot.send_message(chat_id=update.message.chat_id, text='Something is wrong...')
 
 	job_queue.run_repeating(check_status, 5, first = 5, context=update.message.chat_id)
 
-check_status_timer_handler = CommandHandler('check_web', check_status_timer)
+check_status_timer_handler = CommandHandler('check_web', check_status_timer, pass_job_queue=True)
 dispatcher.add_handler(check_status_timer_handler)
 
 
@@ -95,7 +118,6 @@ def stop_check_status(bot, update, job_queue):
 	job_queue.stop()
 stop_check_status_handler = CommandHandler('stop_check_status', stop_check_status, pass_job_queue=True)
 dispatcher.add_handler(stop_check_status_handler)
-
 
 
 
@@ -109,6 +131,42 @@ exit()
 
 import logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+
+
+def caps(bot, update, args):
+	if(args):
+		stop=False
+	else:
+		stop=True
+
+	#text_caps = ' '.join(args).upper()
+	bot.send_message(chat_id=update.message.chat_id, text=args)
+caps_handler = CommandHandler('caps', caps, pass_args=True)
+dispatcher.add_handler(caps_handler)
+
+
+#def hello(bot, update):
+#	print('hello')
+	#print(stop)
+	#stop = True
+	#print(stop)
+#	d[update.message.chat_id]=True
+#	update.message.reply_text('Hello {}'.format(update.message.from_user.first_name))
+#dispatcher.add_handler(CommandHandler('hello', hello))
+
+#def bye(bot, update):
+	#print('bye')
+	#print(stop)
+	#stop = False
+	#d[update.message.chat_id]=False
+	#print(stop)
+#	update.message.reply_text('Bye {}'.format(update.message.from_user.first_name))
+#dispatcher.add_handler(CommandHandler('bye', bye))
+
+
+
+
 
 
 

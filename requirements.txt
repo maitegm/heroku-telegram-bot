@@ -13,3 +13,4 @@ requests==2.16.5
 
 git+https://github.com/python-telegram-bot/python-telegram-bot
 
+git+https://github.com/rthalley/dnspython.git
