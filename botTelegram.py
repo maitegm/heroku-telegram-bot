@@ -36,50 +36,66 @@ def hello(bot, update):
     print("hello")
     update.message.reply_text(
         'Hello {}'.format(update.message.from_user.first_name))
-
-
-#updater = Updater('527767265:AAE6VWFeq9KjSgusAhHYXLPn4SucYDdcFJc')
-
 dispatcher.add_handler(CommandHandler('hello', hello))
 
 
 
+
+def check_web_working(name):
+	try:
+		r = requests.get(name)
+		if(r.status_code==200):
+			return True
+		else:
+			return False
+	except:
+		return False
+
+
+
+
+def send_working_message(bot, job, working_now):
+	if(working_now):
+		bot.send_message(chat_id=job.context, text='It\'s all good, man')
+	else:
+		bot.send_message(chat_id=job.context, text='Not working')
+
+def check_status(bot, job):
+	working_now = check_web_working('http://www.niclabs.cl')
+	if(working != working_now):
+		send_working_message(bot, job, working_now)
+		working = working_now
+		
+
+working = False
+def check_status_timer(bot, update):
+	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds')
+	working = check_web_working('http://www.niclabs.cl')
+	send_working_message(bot, job, working)
+	job_queue.run_repeating(check_status, 5, first = 5, context=update.message.chat_id)
+
+check_status_timer_handler = CommandHandler('check_web', check_status_timer)
+dispatcher.add_handler(check_status_timer_handler)
+
+
+def stop_check_status(bot, update, job_queue):
+	bot.send_message(chat_id=update.message.chat_id, text="Stop checking the status")	
+stop_check_status_handler = CommandHandler('stop_check_status', stop_check_status, pass_job_queue=True)
+dispatcher.add_handler(stop_check_status_handler)
+
+
+
+
+updater.start_polling()
+print('running')
+updater.idle()
+
+
+exit()
+
+
 import logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-
-
-checking = False
-
-def check_status(bot, update):
-	checking = True
-
-	while(checking):
-
-		try:
-
-			r = requests.get('http://www.niclabs.cl')
-			if(r.status_code==200):
-				bot.send_message(chat_id=update.message.chat_id, text="it's all good, man")	
-			else:
-				bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
-		except:
-			bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
-
-		time.sleep(3)
-		checking = False
-
-chats_subscribed = []
-
-check_status_handler = CommandHandler('check_status', check_status)
-dispatcher.add_handler(check_status_handler)
-
-
-def stop_check_status(bot, update):
-	checking = False
-	bot.send_message(chat_id=update.message.chat_id, text="No checking the status")	
-		
-stop_check_status_handler = CommandHandler('stop_check_status', stop_check_status)
-dispatcher.add_handler(stop_check_status_handler)
 
 
 
@@ -104,8 +120,3 @@ def stop_timer(bot, update, job_queue):
 		
 stop_timer_handler = CommandHandler('stop_timer', stop_timer, pass_job_queue=True)
 dispatcher.add_handler(stop_timer_handler)
-
-
-updater.start_polling()
-print('running')
-updater.idle()
