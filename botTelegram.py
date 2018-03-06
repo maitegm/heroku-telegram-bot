@@ -46,19 +46,35 @@ import logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
-
+checking = False
 
 def check_status(bot, update):
-	try:
-		r = requests.get('http://www.niclabs.cl')
-		if(r.status_code==200):
-			bot.send_message(chat_id=update.message.chat_id, text="it's all good, man")	
-		else:
+	checking = True
+	while(checking):
+
+		try:
+
+			r = requests.get('http://www.niclabs.cl')
+			if(r.status_code==200):
+				bot.send_message(chat_id=update.message.chat_id, text="it's all good, man")	
+			else:
+				bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
+		except:
 			bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
-	except:
-		bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
+
+		time.sleep(2000)
+
 check_status_handler = CommandHandler('check_status', check_status)
 dispatcher.add_handler(check_status_handler)
+
+
+def stop_check_status(bot, update):
+	checking = False
+	bot.send_message(chat_id=update.message.chat_id, text="No checking the status")	
+		
+stop_check_status_handler = CommandHandler('stop_check_status', stop_check_status)
+dispatcher.add_handler(stop_check_status_handler)
+
 
 
 updater.start_polling()
