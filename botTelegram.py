@@ -52,6 +52,7 @@ checking = False
 
 def check_status(bot, update):
 	checking = True
+
 	while(checking):
 
 		try:
@@ -67,6 +68,8 @@ def check_status(bot, update):
 		time.sleep(3)
 		checking = False
 
+chats_subscribed = []
+
 check_status_handler = CommandHandler('check_status', check_status)
 dispatcher.add_handler(check_status_handler)
 
@@ -78,6 +81,17 @@ def stop_check_status(bot, update):
 stop_check_status_handler = CommandHandler('stop_check_status', stop_check_status)
 dispatcher.add_handler(stop_check_status_handler)
 
+
+
+
+def callback_alarm(bot, job):
+	bot.send_message(chat_id=job.context, text='BEEP')
+def callback_timer(bot, update, job_queue):
+	bot.send_message(chat_id=update.message.chat_id, text='Setting a timer for 1 minute!')
+	#run_repeating(callback, interval, first=None, context=None, name=None)
+	job_queue.run_repeating(callback_alarm, 5, first = 0, context=update.message.chat_id)
+timer_handler = CommandHandler('timer', callback_timer, pass_job_queue=True)
+dispatcher.add_handler(timer_handler)
 
 
 updater.start_polling()
