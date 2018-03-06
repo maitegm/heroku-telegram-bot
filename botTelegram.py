@@ -43,3 +43,18 @@ import logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 updater.idle()
+
+
+
+def check_status(bot, update, args):
+	r = requests.get('www.niclabs.cl')	
+	if(r.status_code!=200):
+		bot.send_message(chat_id=update.message.chat_id, text="it's all good, man")	
+	else:
+		bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
+	#text_caps = ' '.join(args).upper()
+	#bot.send_message(chat_id=update.message.chat_id, text=text_caps)
+check_status_handler = CommandHandler('check_status', check_status)
+dispatcher.add_handler(check_status_handler)
+
+
