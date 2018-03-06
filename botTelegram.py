@@ -65,6 +65,7 @@ def check_status(bot, update):
 			bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
 
 		time.sleep(3)
+		checking = False
 
 check_status_handler = CommandHandler('check_status', check_status)
 dispatcher.add_handler(check_status_handler)
