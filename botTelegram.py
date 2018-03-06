@@ -39,15 +39,11 @@ def hello(bot, update):
 
 dispatcher.add_handler(CommandHandler('hello', hello))
 
-updater.start_polling()
-#
-print('running')
 
 
 import logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-updater.idle()
 
 
 
@@ -64,3 +60,7 @@ check_status_handler = CommandHandler('check_status', check_status)
 dispatcher.add_handler(check_status_handler)
 
 
+updater.start_polling()
+#
+print('running')
+updater.idle()
