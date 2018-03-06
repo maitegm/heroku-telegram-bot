@@ -2,6 +2,8 @@
 
 import telegram
 import requests
+import time
+
 bot = telegram.Bot(token='522017250:AAE89zva8udGDpm5U_c7jei_rgiiXYP_7Lg')
 
 print(bot.get_me())
@@ -62,7 +64,7 @@ def check_status(bot, update):
 		except:
 			bot.send_message(chat_id=update.message.chat_id, text="Something is wrong...")	
 
-		time.sleep(2000)
+		time.sleep(3)
 
 check_status_handler = CommandHandler('check_status', check_status)
 dispatcher.add_handler(check_status_handler)
