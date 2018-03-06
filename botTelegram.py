@@ -1,16 +1,4 @@
-import requests
 
-try:
-	r = requests.get('http://www.niclabs.cl')
-	if(r.status_code==200):
-		print("It's all good, man")	
-	else:
-		print("Something is wrong...")	
-except:
-	print("Something is wrong...")
-
-
-exit()
 
 import telegram
 bot = telegram.Bot(token='522017250:AAE89zva8udGDpm5U_c7jei_rgiiXYP_7Lg')
