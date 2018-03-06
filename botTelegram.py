@@ -1,6 +1,7 @@
 
 
 import telegram
+import requests
 bot = telegram.Bot(token='522017250:AAE89zva8udGDpm5U_c7jei_rgiiXYP_7Lg')
 
 print(bot.get_me())
@@ -47,7 +48,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 
 
-def check_status(bot, update, args):
+def check_status(bot, update):
 	try:
 		r = requests.get('http://www.niclabs.cl')
 		if(r.status_code==200):
@@ -61,6 +62,5 @@ dispatcher.add_handler(check_status_handler)
 
 
 updater.start_polling()
-#
 print('running')
 updater.idle()
