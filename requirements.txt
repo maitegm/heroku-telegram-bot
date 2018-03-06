@@ -9,3 +9,7 @@ git+https://github.com/Kylmakalle/pyTelegramBotAPI.git@feature-BotAPIV3
 
 # Or you have .zip library
 https://site.org/files/package.zip
+
+
+git+https://github.com/python-telegram-bot/python-telegram-bot
+
