@@ -32,8 +32,11 @@ def caps(bot, update, args):
 caps_handler = CommandHandler('caps', caps, pass_args=True)
 dispatcher.add_handler(caps_handler)
 
+
+stop=False
 def hello(bot, update):
     print("hello")
+    stop=!stop
     update.message.reply_text(
         'Hello {}'.format(update.message.from_user.first_name))
 dispatcher.add_handler(CommandHandler('hello', hello))
@@ -42,6 +45,8 @@ dispatcher.add_handler(CommandHandler('hello', hello))
 
 
 def check_web_working(name):
+	return stop
+
 	try:
 		r = requests.get(name)
 		if(r.status_code==200):
@@ -87,6 +92,7 @@ dispatcher.add_handler(check_status_timer_handler)
 
 def stop_check_status(bot, update, job_queue):
 	bot.send_message(chat_id=update.message.chat_id, text="Stop checking the status")	
+	job_queue.stop()
 stop_check_status_handler = CommandHandler('stop_check_status', stop_check_status, pass_job_queue=True)
 dispatcher.add_handler(stop_check_status_handler)
 
