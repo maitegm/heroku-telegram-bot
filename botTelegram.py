@@ -60,6 +60,8 @@ def send_working_message(bot, job, working_now):
 	else:
 		bot.send_message(chat_id=job.context, text='Not working')
 
+
+
 def check_status(bot, job):
 	working_now = check_web_working('http://www.niclabs.cl')
 	if(working != working_now):
@@ -71,7 +73,12 @@ working = False
 def check_status_timer(bot, update):
 	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds')
 	working = check_web_working('http://www.niclabs.cl')
-	send_working_message(bot, job, working)
+	
+	if(working):
+		bot.send_message(chat_id=update.message.chat_id, text='It\'s all good, man')
+	else:
+		bot.send_message(chat_id=update.message.chat_id, text='Not working')
+
 	job_queue.run_repeating(check_status, 5, first = 5, context=update.message.chat_id)
 
 check_status_timer_handler = CommandHandler('check_web', check_status_timer)
