@@ -26,9 +26,10 @@ start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 
 import random
-
+global r
 def check_web_working():
-	r = random.randint(0,1)
+	global r
+	r = (r+1)%2
 	print(r)
 	print('rand')
 	return r
