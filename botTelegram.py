@@ -12,29 +12,23 @@ print(bot.get_me())
 updater = Updater(token=TOKEN)
 dispatcher = updater.dispatcher
 
-global stop
 
 def start(bot, update):
 	global d
 	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds:')
 	working = check_web_working()
 	d[update.message.chat_id] = working
-	if(working):
-		bot.send_message(chat_id=update.message.chat_id, text='It\'s all good, man.')
-	else:
-		bot.send_message(chat_id=update.message.chat_id, text='Something is wrong...')
-
+	send_working_message(bot, working, update.message.chat_id)
 	job_queue.run_repeating(check_status, 5, first = 5, context=update.message.chat_id)
 
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 
 import random
+
 def check_web_working():
-	if(random.randint(0,10)>3):
-		return True
-	else:
-		return False
+	rand = random.randint(0,3)
+	return rand
 	name = 'niclabs.cl'
 	my_resolver = dns.resolver.Resolver()
 	# 8.8.8.8 is Google's public DNS server
@@ -55,11 +49,11 @@ def check_web_working():
 	#	return False
 
 
-def send_working_message(bot, job, working_now):
+def send_working_message(bot, working_now,chat_id):
 	if(working_now):
-		bot.send_message(chat_id=job.context, text='It\'s all good, man.')
+		bot.send_message(chat_id=chat_id, text='It\'s all good, man.')
 	else:
-		bot.send_message(chat_id=job.context, text='Something is wrong...')
+		bot.send_message(chat_id=chat_id, text='Something is wrong...')
 
 global d
 d = {} #dictionary that saves last status check for every chat
@@ -67,23 +61,16 @@ d = {} #dictionary that saves last status check for every chat
 
 def check_status(bot, job):
 	global d
-	#working_now = True #check_web_working('http://www.niclabs.cl')
 	working = check_web_working()
-	if(d[job.context] != working):
-		if(working):
-			bot.send_message(chat_id=job.context, text='It\'s all good, man.')
-		else:
-			bot.send_message(chat_id=job.context, text='Something is wrong...')
+	if(d[job.context] & working == True):
+		send_working_message(bot, working,job.context)
 		d[job.context] = working
 
 def check_status_timer(bot, update, job_queue):
 	global d
 	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds:')
 	working = check_web_working()
-	if(working):
-		bot.send_message(chat_id=update.message.chat_id, text='It\'s all good, man.')
-	else:
-		bot.send_message(chat_id=update.message.chat_id, text='Something is wrong...')
+	send_working_message(bot, working,update.message.chat_id)
 	d[update.message.chat_id] = working
 
 	job_queue.run_repeating(check_status, 5, first = 5, context=update.message.chat_id)
