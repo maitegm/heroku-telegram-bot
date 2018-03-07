@@ -7,7 +7,7 @@ import os
 import dns.resolver
 from telegram.ext import Updater, CommandHandler
 
-TOKEN = os.environ.get('TELEGRAM_TOKEN','token')
+TOKEN = os.environ.get('TELEGRAM_TOKEN','522017250:AAFrvV13AGjyZwNtzktx4FHsj9hP7l_H7GM')
 bot = telegram.Bot(token=TOKEN)
 print(bot.get_me())
 updater = Updater(token=TOKEN)
