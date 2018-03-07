@@ -3,10 +3,11 @@
 import telegram
 import requests
 import time
+import os
 import dns.resolver
 from telegram.ext import Updater, CommandHandler
 
-TOKEN = '522017250:AAE89zva8udGDpm5U_c7jei_rgiiXYP_7Lg'
+TOKEN = os.environ.get('TELEGRAM_TOKEN','token')
 bot = telegram.Bot(token=TOKEN)
 print(bot.get_me())
 updater = Updater(token=TOKEN)
@@ -51,7 +52,7 @@ def check_web_working():
 	#	return False
 
 
-def send_working_message(bot, working_now,chat_id):
+def send_working_emssage(bot, working_now,chat_id):
 	if(working_now):
 		bot.send_message(chat_id=chat_id, text='It\'s all good, man.')
 	else:
