@@ -73,8 +73,8 @@ def check_status_timer(bot, update, job_queue):
 	working = check_web_working()
 	send_working_message(bot, working,update.message.chat_id)
 	d[update.message.chat_id] = working
-
-	job_queue.run_repeating(check_status, 5, first = 5, context=update.message.chat_id)
+	bot.send_message(chat_id=update.message.chat_id, text=update.message.chat_id)
+	job_queue.run_repeating(check_status, 5, first = 0, context=update.message.chat_id)
 
 check_status_timer_handler = CommandHandler('check_web', check_status_timer, pass_job_queue=True)
 dispatcher.add_handler(check_status_timer_handler)
