@@ -66,21 +66,21 @@ d = {} #dictionary that saves last status check for every chat
 def check_status(bot, job):
 	#working_now = True #check_web_working('http://www.niclabs.cl')
 	working = check_web_working()
-	if(d[update.message.chat_id] != working):
+	if(d[job.context] != working):
 		if(working):
-			bot.send_message(chat_id=update.message.chat_id, text='It\'s all good, man.')
+			bot.send_message(chat_id=job.context, text='It\'s all good, man.')
 		else:
-			bot.send_message(chat_id=update.message.chat_id, text='Something is wrong...')
-		d[update.message.chat_id] = working
+			bot.send_message(chat_id=job.context, text='Something is wrong...')
+		d[job.context] = working
 
 def check_status_timer(bot, update, job_queue):
 	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds:')
 	working = check_web_working()
-	d[update.message.chat_id] = working
 	if(working):
 		bot.send_message(chat_id=update.message.chat_id, text='It\'s all good, man.')
 	else:
 		bot.send_message(chat_id=update.message.chat_id, text='Something is wrong...')
+	d[update.message.chat_id] = working
 
 	job_queue.run_repeating(check_status, 5, first = 5, context=update.message.chat_id)
 
