@@ -52,7 +52,7 @@ def check_web_working():
 	#	return False
 
 
-def send_working_emssage(bot, working_now,chat_id):
+def send_working_message(bot, working_now,chat_id):
 	if(working_now):
 		bot.send_message(chat_id=chat_id, text='It\'s all good, man.')
 	else:
