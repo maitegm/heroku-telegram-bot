@@ -67,7 +67,7 @@ def check_status(bot, job):
 	if(d[job.context] != working):
 		send_working_message(bot, working,job.context)
 		d[job.context] = working
-	bot.send_message(chat_id=job.context, text=d[job.context] + ' '+working)
+	bot.send_message(chat_id=job.context, text=working)
 
 def check_status_timer(bot, update, job_queue):
 	global d
