@@ -27,8 +27,10 @@ dispatcher.add_handler(start_handler)
 import random
 
 def check_web_working():
-	rand = random.randint(0,3)
-	return rand
+	r = random.randint(0,1)
+	print(r)
+	print('rand')
+	return r
 	name = 'niclabs.cl'
 	my_resolver = dns.resolver.Resolver()
 	# 8.8.8.8 is Google's public DNS server
@@ -62,10 +64,10 @@ d = {} #dictionary that saves last status check for every chat
 def check_status(bot, job):
 	global d
 	working = check_web_working()
-	if(d[job.context] & working == True):
+	if(d[job.context] != working):
 		send_working_message(bot, working,job.context)
 		d[job.context] = working
-	bot.send_message(chat_id=job.context, text='w: '+working)
+	bot.send_message(chat_id=job.context, text=d[job.context] + ' '+working)
 
 def check_status_timer(bot, update, job_queue):
 	global d
