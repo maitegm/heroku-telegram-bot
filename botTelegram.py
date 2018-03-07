@@ -7,18 +7,15 @@ import dns.resolver
 from telegram.ext import Updater, CommandHandler
 
 TOKEN = '522017250:AAE89zva8udGDpm5U_c7jei_rgiiXYP_7Lg'
-
 bot = telegram.Bot(token=TOKEN)
-
 print(bot.get_me())
-
-
-
 updater = Updater(token=TOKEN)
 dispatcher = updater.dispatcher
 
+global stop
 
 def start(bot, update):
+	global d
 	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds:')
 	working = check_web_working()
 	d[update.message.chat_id] = working
@@ -32,8 +29,12 @@ def start(bot, update):
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 
-
+import random
 def check_web_working():
+	if(random.randint(0,10)>3):
+		return True
+	else:
+		return False
 	name = 'niclabs.cl'
 	my_resolver = dns.resolver.Resolver()
 	# 8.8.8.8 is Google's public DNS server
@@ -60,10 +61,12 @@ def send_working_message(bot, job, working_now):
 	else:
 		bot.send_message(chat_id=job.context, text='Something is wrong...')
 
+global d
 d = {} #dictionary that saves last status check for every chat
 
 
 def check_status(bot, job):
+	global d
 	#working_now = True #check_web_working('http://www.niclabs.cl')
 	working = check_web_working()
 	if(d[job.context] != working):
@@ -74,6 +77,7 @@ def check_status(bot, job):
 		d[job.context] = working
 
 def check_status_timer(bot, update, job_queue):
+	global d
 	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds:')
 	working = check_web_working()
 	if(working):
