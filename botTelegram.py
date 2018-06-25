@@ -16,7 +16,7 @@ dispatcher = updater.dispatcher
 
 def start(bot, update):
 	global d
-	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 5 seconds:')
+	bot.send_message(chat_id=update.message.chat_id, text='Checking status every 60 seconds:')
 	working = check_web_working()
 	d[update.message.chat_id] = working
 	send_working_message(bot, working, update.message.chat_id)
